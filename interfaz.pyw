@@ -2,10 +2,11 @@ from tkinter import *
 from tkinter import ttk
 from CalculadoraBasica import *
 
-
 contador = 0 ; contadorOP = 0; contadorPunto=0; 
 
 cal = CalculadoraBasica()
+
+
 def Cientifica():
     estilos = ttk.Style()
     estilos.theme_use('clam')
