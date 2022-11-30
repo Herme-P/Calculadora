@@ -6,6 +6,7 @@ from CalculadoraBasica import *
 contador = 0 ; contadorOP = 0; contadorPunto=0; 
 
 cal = CalculadoraBasica()
+
 def Cientifica():
     estilos = ttk.Style()
     estilos.theme_use('clam')
@@ -20,6 +21,26 @@ def Cientifica():
     miframe.rowconfigure(1, weight=1)
     miframe.rowconfigure(2, weight=1)
     miframe.rowconfigure(3, weight=1)
+
+    #estilos
+    estilos_entrada1 = ttk.Style()
+    estilos_entrada1.configure('entrada1.TLabel', font="arial 15", anchor="e", background="#0A0A0A", foreground='white')
+    estilos_entrada2 = ttk.Style()
+    estilos_entrada2.configure('entrada2.TLabel', font="arial 38", anchor="e", background="#0A0A0A", foreground='white')
+    estilos_botones_numeros = ttk.Style()
+    estilos_botones_numeros.configure('BotonesNum.TButton', font='arial 13', width=6, background='#373737', foreground='white', relief="flat")
+    estilos_botones_numeros.map('BotonesNum.TButton', background=[('active', 'black')])
+    estilos_botones_igual = ttk.Style()
+    estilos_botones_igual.configure('Botonesigual.TButton', font='arial 13', width=6, background='#85929E', foreground='black', relief="flat")
+    #-estilos
+
+    entrada1_ = StringVar()
+    entrada1 = ttk.Label(miframe,textvariable=entrada1_, style='entrada1.TLabel')
+    entrada1.grid(column=0, row=1, columnspan=4, sticky=(W, N, E, S))
+
+    entrada2_ = StringVar(value="0")
+    entrada2 = ttk.Label(miframe,textvariable=entrada2_, style='entrada2.TLabel')
+    entrada2.grid(column=0, row=2, columnspan=4, sticky=(W, N, E, S))
 
 def ED():
     estilos = ttk.Style()
@@ -252,6 +273,7 @@ estandar.config(background='black', foreground='white',font='arial 12',  relief=
 barraMenu.add_cascade(label='Estándar', menu=estandar)
 
 Estandar()
+
 raiz.mainloop()
 
 
