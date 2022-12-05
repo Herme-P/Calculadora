@@ -204,7 +204,7 @@ def Estandar():
     boton_Dividir = ttk.Button(miframe, text=chr(247), style='BotonesNum.TButton', command=lambda: Operaciones("/")) 
     boton_Igual = ttk.Button(miframe, text="=", style='Botonesigual.TButton', command=lambda: Resultados()) 
 
-    #colocar botones bisibles
+    #colocar botones Visibles
     
     boton_Porcentaje.grid(column=0, row=3, sticky=(W, N, E, S))
     boton_borrarTodo.grid(column=1, row=3, sticky=(W, N, E, S))
@@ -253,6 +253,7 @@ estandar.config(background='black', foreground='white',font='arial 12',  relief=
 barraMenu.add_cascade(label='Estándar', menu=estandar)
 
 Estandar()
+
 raiz.mainloop()
 
 

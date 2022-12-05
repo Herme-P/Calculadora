@@ -35,11 +35,11 @@ class App:
 
         self.entrada1_ = StringVar()
         self.entrada1 = ttk.Label(self.miframe,textvariable=self.entrada1_, style='entrada1.TLabel')
-        self.entrada1.grid(column=0, row=1, columnspan=4, sticky=(W, N, E, S))
+        self.entrada1.grid(column=0, row=1, columnspan=5, sticky=(W, N, E, S))
 
         self.entrada2_ = StringVar(value="0")
         self.entrada2 = ttk.Label(self.miframe,textvariable=self.entrada2_, style='entrada2.TLabel')
-        self.entrada2.grid(column=0, row=2, columnspan=4, sticky=(W, N, E, S))
+        self.entrada2.grid(column=0, row=2, columnspan=5, sticky=(W, N, E, S))
 
 raiz = Tk()
 raiz.title("Calculadora")
@@ -93,7 +93,8 @@ def Estandar():
             contador = 0
             operacion = oper
             contadorOP += 1
-        contadorPunto = 0    
+        contadorPunto = 0  
+
     def Resultados():
         global contador, operacion, contadorOP, contadorPunto  
         cal.valor2 = float(aplicacion.entrada2_.get())
@@ -137,6 +138,7 @@ def Estandar():
         cal.valor1=0
         cal.valor2=0
         aplicacion.entrada2_.set('0')
+    
     def BorrarUltimos():
         global contador
         contador = 0
@@ -224,7 +226,7 @@ def Estandar():
 def ED():
     aplicacion = App(raiz)
     
-
+    
     boton0 = ttk.Button(aplicacion.miframe, text="0", style='BotonesNum.TButton',) 
     boton0.grid(column=1, row=7, sticky=(W, N, E, S))
     boton1 = ttk.Button(aplicacion.miframe, text="1", style='BotonesNum.TButton',) 
@@ -232,7 +234,197 @@ def ED():
 
 def Cientifica():
     aplicacion = App(raiz)
-    aplicacion.entrada2_.set("0")
+    def numeroPulsado(numero):
+        global contador, contadorPunto
+        
+        if contador == 0:
+            aplicacion.entrada2_.set("")
+            aplicacion.entrada2_.set(aplicacion.entrada2_.get()+numero)
+            contador = 1
+        else:
+            aplicacion.entrada2_.set(aplicacion.entrada2_.get()+numero) 
+        if contadorPunto==1:
+            aplicacion.entrada1_.set(aplicacion.entrada1_.get()+numero) 
+            print(aplicacion.entrada1_.get())
+
+    def Operaciones(oper):
+        global contador, operacion, contadorOP, contadorPunto
+        
+        if contadorOP == 0:
+            aplicacion.entrada1_.set(aplicacion.entrada2_.get()+" "+ oper)
+            cal.valor1 = float(aplicacion.entrada2_.get() )
+            aplicacion.entrada2_.set(cal.MostrarResultado())
+            contador = 0
+            operacion = oper
+            contadorOP += 1
+        else:
+            if contadorPunto==1:
+                cal.valor1 = eval(aplicacion.entrada1_.get())
+            else:
+                cal.valor1 = eval(aplicacion.entrada1_.get()+aplicacion.entrada2_.get() )
+            aplicacion.entrada1_.set(str(cal.valor1)+' '+oper)
+            aplicacion.entrada2_.set('0')
+            contador = 0
+            operacion = oper
+            contadorOP += 1
+        contadorPunto = 0  
+
+    def Resultados():
+        global contador, operacion, contadorOP, contadorPunto  
+        cal.valor2 = float(aplicacion.entrada2_.get())
+        if operacion == '+':
+            cal.sumar()
+        elif operacion == '-':
+            cal.restar()
+        elif operacion == '*':
+            cal.multiplicar()
+        elif operacion == '/':
+            cal.dividir()
+
+        if contadorPunto == 1:
+            aplicacion.entrada1_.set(str(cal.valor1)+' + '+str(cal.valor2))    
+        else:
+            aplicacion.entrada1_.set(aplicacion.entrada1_.get()+" "+aplicacion.entrada2_.get())
+        
+        aplicacion.entrada2_.set(cal.MostrarResultado()) 
+        contador = 0; contadorOP = 0; contadorPunto = 0
+
+    def Punto():
+        global contadorPunto, contadorOP, contador
+        if contadorPunto == 0 :
+            if contador == 0:
+                aplicacion.entrada2_.set('0.')
+                aplicacion.entrada1_.set('0.')
+                
+            else:
+                if contadorOP >= 1:
+                    aplicacion.entrada1_.set(aplicacion.entrada1_.get()+aplicacion.entrada2_.get()+'.') 
+                    aplicacion.entrada2_.set(aplicacion.entrada2_.get()+'.')  
+                else:
+                    aplicacion.entrada1_.set(aplicacion.entrada2_.get()+'.') 
+                    aplicacion.entrada2_.set(aplicacion.entrada1_.get()) 
+        
+        contadorPunto+=1
+    def BorrarTodo():
+        global contador
+        contador = 0
+        aplicacion.entrada1_.set('')
+        cal.valor1=0
+        cal.valor2=0
+        aplicacion.entrada2_.set('0')
+    
+    def BorrarUltimos():
+        global contador
+        contador = 0
+        cal.valor2=0
+        aplicacion.entrada2_.set('0')
+    def BorrarUltimo():
+        global contador
+        contador = 0
+        aplicacion.entrada2_.set(aplicacion.entrada2_.get()[:-1])
+    def Negacion():
+        aplicacion.entrada2_.set(str(eval(aplicacion.entrada2_.get()+'*(-1)')))
+        cal.valor2 = float(aplicacion.entrada2_.get()) 
+    def Boton2nd():
+        print("something")
+    def CuadradoX():
+        aplicacion.entrada2_.set(str(eval(aplicacion.entrada2_.get()+'**2')))
+        cal.valor2 = float(aplicacion.entrada2_.get()) 
+    def Raiz2():
+        aplicacion.entrada2_.set(str(eval(aplicacion.entrada2_.get()+'**0.5')))
+        cal.valor2 = float(aplicacion.entrada2_.get()) 
+    def DivididoX():
+        aplicacion.entrada2_.set(str(eval('1/'+aplicacion.entrada2_.get())))
+        cal.valor2 = float(aplicacion.entrada2_.get()) 
+    
+    
+    variableTrigonometrica = StringVar(aplicacion.miframe, value="Trigonometría")
+    trigonometricas = OptionMenu(aplicacion.miframe, variableTrigonometrica, *["Seno","Coseno","Tangente"])
+    trigonometricas.config(background='black', foreground='white',font='arial 12',  relief="flat")
+    trigonometricas.grid(column=0, row=3, sticky=(W, N, E, S))
+
+    variableFunciones = StringVar(aplicacion.miframe, value="Función")
+    Funciones = OptionMenu(aplicacion.miframe, variableFunciones, *["RAD","DEG","..."])
+    Funciones.config(background='black', foreground='white',font='arial 12',  relief="flat")
+    Funciones.grid(column=1, row=3, sticky=(W, N, E, S))
+
+
+    boton0 = ttk.Button(aplicacion.miframe, text="0", style='BotonesNum.TButton', command=lambda: numeroPulsado('0')) 
+    boton0.grid(column=2, row=10, sticky=(W, N, E, S))
+    boton1 = ttk.Button(aplicacion.miframe, text="1", style='BotonesNum.TButton', command=lambda: numeroPulsado('1')) 
+    boton1.grid(column=1, row=9, sticky=(W, N, E, S))
+    boton2 = ttk.Button(aplicacion.miframe, text="2", style='BotonesNum.TButton', command=lambda: numeroPulsado('2'))
+    boton2.grid(column=2, row=9, sticky=(W, N, E, S)) 
+    boton3 = ttk.Button(aplicacion.miframe, text="3", style='BotonesNum.TButton', command=lambda: numeroPulsado('3')) 
+    boton3.grid(column=3, row=9, sticky=(W, N, E, S))
+    boton4 = ttk.Button(aplicacion.miframe, text="4", style='BotonesNum.TButton', command=lambda: numeroPulsado('4')) 
+    boton4.grid(column=1, row=8, sticky=(W, N, E, S))
+    boton5 = ttk.Button(aplicacion.miframe, text="5", style='BotonesNum.TButton', command=lambda: numeroPulsado('5'))
+    boton5.grid(column=2, row=8, sticky=(W, N, E, S)) 
+    boton6 = ttk.Button(aplicacion.miframe, text="6", style='BotonesNum.TButton', command=lambda: numeroPulsado('6'))
+    boton6.grid(column=3, row=8, sticky=(W, N, E, S)) 
+    boton7 = ttk.Button(aplicacion.miframe, text="7", style='BotonesNum.TButton', command=lambda: numeroPulsado('7')) 
+    boton7.grid(column=1, row=7, sticky=(W, N, E, S))
+    boton8 = ttk.Button(aplicacion.miframe, text="8", style='BotonesNum.TButton', command=lambda: numeroPulsado('8')) 
+    boton8.grid(column=2, row=7, sticky=(W, N, E, S))
+    boton9 = ttk.Button(aplicacion.miframe, text="9", style='BotonesNum.TButton', command=lambda: numeroPulsado('9')) 
+    boton9.grid(column=3, row=7, sticky=(W, N, E, S))
+
+    boton_borrar = ttk.Button(aplicacion.miframe, text=chr(9003), style='BotonesNum.TButton', command=lambda: BorrarUltimo()) 
+    boton_borrar.grid(column=4, row=4, sticky=(W, N, E, S))
+    boton_borrarTodo = ttk.Button(aplicacion.miframe, text="C", style='BotonesNum.TButton', command=lambda:BorrarTodo()) 
+    boton_borrarTodo.grid(column=3, row=4, sticky=(W, N, E, S))
+    boton_Igual = ttk.Button(aplicacion.miframe, text="=", style='Botonesigual.TButton', command=lambda: Resultados()) 
+    boton_Igual.grid(column=4, row=10, sticky=(W, N, E, S))
+    boton_Punto = ttk.Button(aplicacion.miframe, text=".", style='BotonesNum.TButton', command=lambda: Punto()) 
+    boton_Punto.grid(column=3, row=10, sticky=(W, N, E, S))
+    boton_Negacion = ttk.Button(aplicacion.miframe, text="+/-", style='BotonesNum.TButton', command= lambda: Negacion())
+    boton_Negacion.grid(column=1, row=10, sticky=(W, N, E, S))
+
+    boton_Mas = ttk.Button(aplicacion.miframe, text="+", style='BotonesNum.TButton', command=lambda: Operaciones("+")) 
+    boton_Mas.grid(column=4, row=9, sticky=(W, N, E, S))
+    boton_Menos = ttk.Button(aplicacion.miframe, text="-", style='BotonesNum.TButton', command=lambda: Operaciones("-")) 
+    boton_Menos.grid(column=4, row=8, sticky=(W, N, E, S))
+    boton_Multiplicar = ttk.Button(aplicacion.miframe, text="*", style='BotonesNum.TButton', command=lambda: Operaciones("*")) 
+    boton_Multiplicar.grid(column=4, row=7, sticky=(W, N, E, S))
+    boton_Dividir = ttk.Button(aplicacion.miframe, text=chr(247), style='BotonesNum.TButton', command=lambda: Operaciones("/")) 
+    boton_Dividir.grid(column=4, row=6, sticky=(W, N, E, S))
+    
+    boton_2nd = ttk.Button(aplicacion.miframe, text="2nd", style='BotonesNum.TButton',)
+    boton_2nd.grid(column=0, row=4, sticky=(W, N, E, S))
+    boton_CuadradoX = ttk.Button(aplicacion.miframe, text="X^2", style='BotonesNum.TButton', command=lambda: CuadradoX()) 
+    boton_CuadradoX.grid(column=0, row=5, sticky=(W, N, E, S))
+    boton_Raiz2 = ttk.Button(aplicacion.miframe, text="√", style='BotonesNum.TButton', command=lambda: Raiz2()) 
+    boton_Raiz2.grid(column=0, row=6, sticky=(W, N, E, S))
+    boton_XelevadoY = ttk.Button(aplicacion.miframe, text="X^y", style='BotonesNum.TButton', )
+    boton_XelevadoY.grid(column=0, row=7, sticky=(W, N, E, S))
+    boton_10elevadoX = ttk.Button(aplicacion.miframe, text="10^x", style='BotonesNum.TButton',)
+    boton_10elevadoX.grid(column=0, row=8, sticky=(W, N, E, S))
+    boton_log = ttk.Button(aplicacion.miframe, text="log", style='BotonesNum.TButton',)
+    boton_log.grid(column=0, row=9, sticky=(W, N, E, S))
+    boton_ln= ttk.Button(aplicacion.miframe, text="ln", style='BotonesNum.TButton',)
+    boton_ln.grid(column=0, row=10, sticky=(W, N, E, S))
+
+    boton_PI = ttk.Button(aplicacion.miframe, text="PI", style='BotonesNum.TButton',)
+    boton_PI.grid(column=1, row=4, sticky=(W, N, E, S))
+    boton_e = ttk.Button(aplicacion.miframe, text="e", style='BotonesNum.TButton',)
+    boton_e.grid(column=2, row=4, sticky=(W, N, E, S))
+    boton_divididoX = ttk.Button(aplicacion.miframe, text="1/X", style='BotonesNum.TButton', command=lambda: DivididoX())
+    boton_divididoX.grid(column=1, row=5, sticky=(W, N, E, S))
+
+    boton_abrirP = ttk.Button(aplicacion.miframe, text="(", style='BotonesNum.TButton',)
+    boton_abrirP.grid(column=1, row=6, sticky=(W, N, E, S))
+    boton_cerrarP = ttk.Button(aplicacion.miframe, text=")", style='BotonesNum.TButton',)
+    boton_cerrarP.grid(column=2, row=6, sticky=(W, N, E, S))
+    boton_factorial = ttk.Button(aplicacion.miframe, text="N!", style='BotonesNum.TButton',)
+    boton_factorial.grid(column=3, row=6, sticky=(W, N, E, S))
+    boton_Vabsoluto = ttk.Button(aplicacion.miframe, text="|X|", style='BotonesNum.TButton',)
+    boton_Vabsoluto.grid(column=2, row=5, sticky=(W, N, E, S))
+    boton_exp = ttk.Button(aplicacion.miframe, text="exp", style='BotonesNum.TButton',)
+    boton_exp.grid(column=3, row=5, sticky=(W, N, E, S))
+    boton_mod = ttk.Button(aplicacion.miframe, text="mod", style='BotonesNum.TButton',)
+    boton_mod.grid(column=4, row=5, sticky=(W, N, E, S))
+
 
 Estandar()
 
