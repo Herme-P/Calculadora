@@ -14,7 +14,11 @@ class CalculadoraBasica():
         self.resultado = self.valor1 * self.valor2
     
     def dividir(self):
-        self.resultado = self.valor1 / self.valor2
+        if self.valor2 != 0:
+            self.resultado = self.valor1 / self.valor2
+        else:
+            self.resultado = "La división por cero no esta definida"
+    
     def Cuadrado(self):
         self.resultado = self.valor2**2 
     def MostrarResultado(self):

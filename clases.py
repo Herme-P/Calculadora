@@ -3,7 +3,7 @@ from tkinter import ttk
 from CalculadoraBasica import *
 
 cal = CalculadoraBasica()
-contador = 0 ; contadorOP = 0; contadorPunto=0; 
+contador = 0 ; contadorOP = 0; contadorPunto=0; contador2nd=0; operacion=""; 
 
 class App:
     def __init__(self, master):
@@ -137,6 +137,7 @@ def Estandar():
         aplicacion.entrada1_.set('')
         cal.valor1=0
         cal.valor2=0
+        cal.resultado=0
         aplicacion.entrada2_.set('0')
     
     def BorrarUltimos():
@@ -252,7 +253,7 @@ def Cientifica():
         
         if contadorOP == 0:
             aplicacion.entrada1_.set(aplicacion.entrada2_.get()+" "+ oper)
-            cal.valor1 = float(aplicacion.entrada2_.get() )
+            cal.valor1 = float(eval(aplicacion.entrada2_.get()) )
             aplicacion.entrada2_.set(cal.MostrarResultado())
             contador = 0
             operacion = oper
@@ -271,7 +272,7 @@ def Cientifica():
 
     def Resultados():
         global contador, operacion, contadorOP, contadorPunto  
-        cal.valor2 = float(aplicacion.entrada2_.get())
+        cal.valor2 = float(str(eval(aplicacion.entrada2_.get())))
         if operacion == '+':
             cal.sumar()
         elif operacion == '-':
@@ -286,7 +287,10 @@ def Cientifica():
         else:
             aplicacion.entrada1_.set(aplicacion.entrada1_.get()+" "+aplicacion.entrada2_.get())
         
-        aplicacion.entrada2_.set(cal.MostrarResultado()) 
+        if operacion=='':
+            aplicacion.entrada2_.set(cal.valor2) 
+        else:    
+            aplicacion.entrada2_.set(cal.MostrarResultado()) 
         contador = 0; contadorOP = 0; contadorPunto = 0
 
     def Punto():
@@ -311,13 +315,9 @@ def Cientifica():
         aplicacion.entrada1_.set('')
         cal.valor1=0
         cal.valor2=0
+        cal.resultado=0
         aplicacion.entrada2_.set('0')
     
-    def BorrarUltimos():
-        global contador
-        contador = 0
-        cal.valor2=0
-        aplicacion.entrada2_.set('0')
     def BorrarUltimo():
         global contador
         contador = 0
@@ -326,18 +326,65 @@ def Cientifica():
         aplicacion.entrada2_.set(str(eval(aplicacion.entrada2_.get()+'*(-1)')))
         cal.valor2 = float(aplicacion.entrada2_.get()) 
     def Boton2nd():
-        print("something")
+        global contador2nd
+        if contador2nd==0:
+            boton_CuboX = ttk.Button(aplicacion.miframe, text="X^3", style='BotonesNum.TButton', command=lambda: CuboX()) 
+            boton_CuboX.grid(column=0, row=5, sticky=(W, N, E, S))
+            boton_Raiz3 = ttk.Button(aplicacion.miframe, text="3√x", style='BotonesNum.TButton', command=lambda: Raiz3()) 
+            boton_Raiz3.grid(column=0, row=6, sticky=(W, N, E, S))
+            boton_Raizx = ttk.Button(aplicacion.miframe, text="y√x", style='BotonesNum.TButton', command=lambda: 2+2) 
+            boton_Raizx.grid(column=0, row=7, sticky=(W, N, E, S))
+            boton_2elevadoX= ttk.Button(aplicacion.miframe, text="2^x", style='BotonesNum.TButton', command=lambda: 2+2) 
+            boton_2elevadoX.grid(column=0, row=8, sticky=(W, N, E, S))
+            boton_logyX= ttk.Button(aplicacion.miframe, text="logyX", style='BotonesNum.TButton', command=lambda: 2+2) 
+            boton_logyX.grid(column=0, row=9, sticky=(W, N, E, S))
+            boton_e_elevadoX= ttk.Button(aplicacion.miframe, text="e^x", style='BotonesNum.TButton', command=lambda: 2+2) 
+            boton_e_elevadoX.grid(column=0, row=10, sticky=(W, N, E, S))
+            for child in aplicacion.miframe.winfo_children():
+                child.grid_configure(ipady=6, padx=1, pady=1)
+            contador2nd = 1
+        else:
+            boton_CuadradoX = ttk.Button(aplicacion.miframe, text="X^2", style='BotonesNum.TButton', command=lambda: CuadradoX()) 
+            boton_CuadradoX.grid(column=0, row=5, sticky=(W, N, E, S))
+            boton_Raiz2 = ttk.Button(aplicacion.miframe, text="√", style='BotonesNum.TButton', command=lambda: Raiz2()) 
+            boton_Raiz2.grid(column=0, row=6, sticky=(W, N, E, S))
+            boton_XelevadoY = ttk.Button(aplicacion.miframe, text="X^y", style='BotonesNum.TButton', )
+            boton_XelevadoY.grid(column=0, row=7, sticky=(W, N, E, S))
+            boton_10elevadoX = ttk.Button(aplicacion.miframe, text="10^x", style='BotonesNum.TButton',)
+            boton_10elevadoX.grid(column=0, row=8, sticky=(W, N, E, S))
+            boton_log = ttk.Button(aplicacion.miframe, text="log", style='BotonesNum.TButton',)
+            boton_log.grid(column=0, row=9, sticky=(W, N, E, S))
+            boton_ln= ttk.Button(aplicacion.miframe, text="ln", style='BotonesNum.TButton',)
+            boton_ln.grid(column=0, row=10, sticky=(W, N, E, S))
+            for child in aplicacion.miframe.winfo_children():
+                child.grid_configure(ipady=6, padx=1, pady=1)
+            contador2nd = 0
+        
+    
     def CuadradoX():
         aplicacion.entrada2_.set(str(eval(aplicacion.entrada2_.get()+'**2')))
+        cal.valor2 = float(aplicacion.entrada2_.get()) 
+    def CuboX():
+        aplicacion.entrada2_.set(str(eval(aplicacion.entrada2_.get()+'**3')))
         cal.valor2 = float(aplicacion.entrada2_.get()) 
     def Raiz2():
         aplicacion.entrada2_.set(str(eval(aplicacion.entrada2_.get()+'**0.5')))
         cal.valor2 = float(aplicacion.entrada2_.get()) 
+    def Raiz3():
+        aplicacion.entrada2_.set(str(eval(aplicacion.entrada2_.get()+'**(1/3)')))
+        cal.valor2 = float(aplicacion.entrada2_.get()) 
     def DivididoX():
         aplicacion.entrada2_.set(str(eval('1/'+aplicacion.entrada2_.get())))
         cal.valor2 = float(aplicacion.entrada2_.get()) 
-    
-    
+    def ValorAbsoluto():
+        aplicacion.entrada2_.set(abs(float(aplicacion.entrada2_.get())))
+        cal.valor2 = aplicacion.entrada2_.get()
+    def XelevadoY():
+        aplicacion.entrada2_.set(str(aplicacion.entrada2_.get()+'**'))
+    def _10elevadoX(): 
+        aplicacion.entrada2_.set(str(eval('10**'+aplicacion.entrada2_.get())))
+        cal.valor2 = float(aplicacion.entrada2_.get())  
+
     variableTrigonometrica = StringVar(aplicacion.miframe, value="Trigonometría")
     trigonometricas = OptionMenu(aplicacion.miframe, variableTrigonometrica, *["Seno","Coseno","Tangente"])
     trigonometricas.config(background='black', foreground='white',font='arial 12',  relief="flat")
@@ -390,24 +437,24 @@ def Cientifica():
     boton_Dividir = ttk.Button(aplicacion.miframe, text=chr(247), style='BotonesNum.TButton', command=lambda: Operaciones("/")) 
     boton_Dividir.grid(column=4, row=6, sticky=(W, N, E, S))
     
-    boton_2nd = ttk.Button(aplicacion.miframe, text="2nd", style='BotonesNum.TButton',)
+    boton_2nd = ttk.Button(aplicacion.miframe, text="2nd", style='BotonesNum.TButton',command=lambda:Boton2nd())
     boton_2nd.grid(column=0, row=4, sticky=(W, N, E, S))
     boton_CuadradoX = ttk.Button(aplicacion.miframe, text="X^2", style='BotonesNum.TButton', command=lambda: CuadradoX()) 
     boton_CuadradoX.grid(column=0, row=5, sticky=(W, N, E, S))
     boton_Raiz2 = ttk.Button(aplicacion.miframe, text="√", style='BotonesNum.TButton', command=lambda: Raiz2()) 
     boton_Raiz2.grid(column=0, row=6, sticky=(W, N, E, S))
-    boton_XelevadoY = ttk.Button(aplicacion.miframe, text="X^y", style='BotonesNum.TButton', )
+    boton_XelevadoY = ttk.Button(aplicacion.miframe, text="X^y", style='BotonesNum.TButton', command=lambda: XelevadoY())
     boton_XelevadoY.grid(column=0, row=7, sticky=(W, N, E, S))
-    boton_10elevadoX = ttk.Button(aplicacion.miframe, text="10^x", style='BotonesNum.TButton',)
+    boton_10elevadoX = ttk.Button(aplicacion.miframe, text="10^x", style='BotonesNum.TButton', command= lambda: _10elevadoX())
     boton_10elevadoX.grid(column=0, row=8, sticky=(W, N, E, S))
     boton_log = ttk.Button(aplicacion.miframe, text="log", style='BotonesNum.TButton',)
     boton_log.grid(column=0, row=9, sticky=(W, N, E, S))
     boton_ln= ttk.Button(aplicacion.miframe, text="ln", style='BotonesNum.TButton',)
     boton_ln.grid(column=0, row=10, sticky=(W, N, E, S))
 
-    boton_PI = ttk.Button(aplicacion.miframe, text="PI", style='BotonesNum.TButton',)
+    boton_PI = ttk.Button(aplicacion.miframe, text="π", style='BotonesNum.TButton',command=lambda: numeroPulsado('3.1415926535897932384626433832795'))
     boton_PI.grid(column=1, row=4, sticky=(W, N, E, S))
-    boton_e = ttk.Button(aplicacion.miframe, text="e", style='BotonesNum.TButton',)
+    boton_e = ttk.Button(aplicacion.miframe, text="e", style='BotonesNum.TButton',command=lambda: numeroPulsado('2.7182818284590452353602874713527'))
     boton_e.grid(column=2, row=4, sticky=(W, N, E, S))
     boton_divididoX = ttk.Button(aplicacion.miframe, text="1/X", style='BotonesNum.TButton', command=lambda: DivididoX())
     boton_divididoX.grid(column=1, row=5, sticky=(W, N, E, S))
@@ -418,12 +465,15 @@ def Cientifica():
     boton_cerrarP.grid(column=2, row=6, sticky=(W, N, E, S))
     boton_factorial = ttk.Button(aplicacion.miframe, text="N!", style='BotonesNum.TButton',)
     boton_factorial.grid(column=3, row=6, sticky=(W, N, E, S))
-    boton_Vabsoluto = ttk.Button(aplicacion.miframe, text="|X|", style='BotonesNum.TButton',)
+    boton_Vabsoluto = ttk.Button(aplicacion.miframe, text="|X|", style='BotonesNum.TButton',command=lambda: ValorAbsoluto())
     boton_Vabsoluto.grid(column=2, row=5, sticky=(W, N, E, S))
     boton_exp = ttk.Button(aplicacion.miframe, text="exp", style='BotonesNum.TButton',)
     boton_exp.grid(column=3, row=5, sticky=(W, N, E, S))
     boton_mod = ttk.Button(aplicacion.miframe, text="mod", style='BotonesNum.TButton',)
     boton_mod.grid(column=4, row=5, sticky=(W, N, E, S))
+
+    for child in aplicacion.miframe.winfo_children():
+        child.grid_configure(ipady=6, padx=1, pady=1)
 
 
 Estandar()
