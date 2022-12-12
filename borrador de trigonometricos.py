@@ -1,9 +1,10 @@
 from tkinter import *
 from tkinter import ttk
 from CalculadoraBasica import *
+import numpy as np
 
 cal = CalculadoraBasica()
-contador = 0 ; contadorOP = 0; contadorPunto=0; contador2nd=0; operacion=""; 
+contador = 0 ; contadorOP = 0; contadorPunto=0; contador2nd=0; operacion=""; abrirParen=False;
 
 class App:
     def __init__(self, master):
@@ -55,7 +56,7 @@ estandar.add_command(label='Estándar', command=lambda: Estandar())
 estandar.add_command(label='ED', command=lambda: ED())
 estandar.add_command(label='Científica', command=lambda: Cientifica())
 estandar.config(background='black', foreground='white',font='arial 12',  relief="flat")
-barraMenu.add_cascade(label='|||||', menu=estandar)
+barraMenu.add_cascade(label='|||| Menú', menu=estandar)
 
 def Estandar():
     aplicacion = App(raiz)
@@ -249,9 +250,9 @@ def Cientifica():
             print(aplicacion.entrada1_.get())
 
     def Operaciones(oper):
-        global contador, operacion, contadorOP, contadorPunto
+        global contador, operacion, contadorOP, contadorPunto, abrirParen
         
-        if contadorOP == 0:
+        if contadorOP == 0 and abrirParen == False:
             aplicacion.entrada1_.set(aplicacion.entrada2_.get()+" "+ oper)
             cal.valor1 = float(eval(aplicacion.entrada2_.get()) )
             aplicacion.entrada2_.set(cal.MostrarResultado())
@@ -259,19 +260,24 @@ def Cientifica():
             operacion = oper
             contadorOP += 1
         else:
-            if contadorPunto==1:
-                cal.valor1 = eval(aplicacion.entrada1_.get())
+            if  abrirParen == False:
+                if contadorPunto==1:
+                    cal.valor1 = eval(aplicacion.entrada1_.get())
+                else:
+                    cal.valor1 = eval(aplicacion.entrada1_.get()+aplicacion.entrada2_.get() )
+                aplicacion.entrada1_.set(str(cal.valor1)+' '+oper)
+                aplicacion.entrada2_.set('0')
+                contador = 0
+                operacion = oper
+                contadorOP += 1
             else:
-                cal.valor1 = eval(aplicacion.entrada1_.get()+aplicacion.entrada2_.get() )
-            aplicacion.entrada1_.set(str(cal.valor1)+' '+oper)
-            aplicacion.entrada2_.set('0')
-            contador = 0
-            operacion = oper
-            contadorOP += 1
+                aplicacion.entrada1_.set(aplicacion.entrada2_.get()+' '+oper)
+                aplicacion.entrada2_.set(aplicacion.entrada1_.get())
+                
         contadorPunto = 0  
 
     def Resultados():
-        global contador, operacion, contadorOP, contadorPunto  
+        global contador, operacion, contadorOP, contadorPunto, abrirParen  
         cal.valor2 = float(str(eval(aplicacion.entrada2_.get())))
         if operacion == '+':
             cal.sumar()
@@ -285,13 +291,16 @@ def Cientifica():
         if contadorPunto == 1:
             aplicacion.entrada1_.set(str(cal.valor1)+' + '+str(cal.valor2))    
         else:
-            aplicacion.entrada1_.set(aplicacion.entrada1_.get()+" "+aplicacion.entrada2_.get())
+            if abrirParen:
+                aplicacion.entrada1_.set(aplicacion.entrada2_.get())
+            else:
+                aplicacion.entrada1_.set(aplicacion.entrada1_.get()+" "+aplicacion.entrada2_.get())
         
         if operacion=='':
             aplicacion.entrada2_.set(cal.valor2) 
         else:    
             aplicacion.entrada2_.set(cal.MostrarResultado()) 
-        contador = 0; contadorOP = 0; contadorPunto = 0
+        contador = 0; contadorOP = 0; contadorPunto = 0; abrirParen=False
 
     def Punto():
         global contadorPunto, contadorOP, contador
@@ -360,6 +369,7 @@ def Cientifica():
                 child.grid_configure(ipady=6, padx=1, pady=1)
             contador2nd = 0
         
+    
     def CuadradoX():
         aplicacion.entrada2_.set(str(eval(aplicacion.entrada2_.get()+'**2')))
         cal.valor2 = float(aplicacion.entrada2_.get()) 
@@ -383,20 +393,84 @@ def Cientifica():
     def _10elevadoX(): 
         aplicacion.entrada2_.set(str(eval('10**'+aplicacion.entrada2_.get())))
         cal.valor2 = float(aplicacion.entrada2_.get())  
+
+    def factorial():
+        aplicacion.entrada2_.get()
+        n_fac=np.math.factorial(float(aplicacion.entrada2_.get()))
+        aplicacion.entrada2_.set(str(n_fac))
+        cal.valor2 = float(aplicacion.entrada2_.get())
+
+    def exponencial():
+        # global operacion
+        aplicacion.entrada2_.set(str(aplicacion.entrada2_.get()+'*10**'))
+        # operacion=''
+
+    def logaritmo():
+        val=aplicacion.entrada2_.get()
+        if val == '0':
+            cal.valor2 = str('Match error')
+            aplicacion.entrada2_.set(cal.valor2)
+        else:
+            x_log=np.log10(float(aplicacion.entrada2_.get()))
+            aplicacion.entrada2_.set(str(x_log))
+            cal.valor2 = float(aplicacion.entrada2_.get())
+
+    def logaritmo_natural():
+        val=aplicacion.entrada2_.get()
+        if val == '0':
+            cal.valor2 = str('Match error')
+            aplicacion.entrada2_.set(cal.valor2)
+        else:
+            x_log=np.log(float(aplicacion.entrada2_.get()))
+            aplicacion.entrada2_.set(str(x_log))
+            cal.valor2 = float(aplicacion.entrada2_.get())
+        
+
+    def fun_trig(event):
+        fun_trig=variableTrigonometrica.get()
+        if fun_trig == 'Sen':
+            val=np.sin(float(aplicacion.entrada2_.get()))
+            aplicacion.entrada2_.set(str(val))
+            cal.valor2 = float(aplicacion.entrada2_.get())
+        elif fun_trig == 'Cos':
+            val=np.cos(float(aplicacion.entrada2_.get()))
+            aplicacion.entrada2_.set(str(val))
+            cal.valor2 = float(aplicacion.entrada2_.get())
+        else:
+            val=np.tan(float(aplicacion.entrada2_.get()))
+            aplicacion.entrada2_.set(str(val))
+            cal.valor2 = float(aplicacion.entrada2_.get())
     
     def Funcionescal(event):
+        Valor = float(aplicacion.entrada2_.get())
         if variableFunciones.get()=="RAD":
-            print('convertir a radianes')
+            rad1 = np.deg2rad(Valor)  
+            aplicacion.entrada2_.set(str(rad1)) 
+            cal.valor2 = float(aplicacion.entrada2_.get())  
         elif variableFunciones.get()=="DEG":
-            print('convertir a grados')
+            deg1 = np.rad2deg(Valor)  
+            aplicacion.entrada2_.set(str(deg1)) 
+            cal.valor2 = float(aplicacion.entrada2_.get())   
+    
+    def Aparentesis():
+        global abrirParen
+        aplicacion.entrada2_.set(str(aplicacion.entrada2_.get()+'*('))
+        abrirParen=True
+    
+    def Cparentesis():
+        aplicacion.entrada2_.set(str(aplicacion.entrada2_.get()+')'))
+   
+    def Porcentaje():
+        aplicacion.entrada2_.set(str(eval(aplicacion.entrada2_.get()+'*'+aplicacion.entrada1_.get()[:-2]+'/100')))
+        cal.valor2 = float(aplicacion.entrada2_.get()) 
+    
     variableTrigonometrica = StringVar(aplicacion.miframe, value="Trigonometría")
-    trigonometricas = OptionMenu(aplicacion.miframe, variableTrigonometrica, *["Seno","Coseno","Tangente"])
+    trigonometricas = OptionMenu(aplicacion.miframe, variableTrigonometrica, *["Sen","Cos","Tan"], command=fun_trig)
     trigonometricas.config(background='black', foreground='white',font='arial 12',  relief="flat")
     trigonometricas.grid(column=0, row=3, sticky=(W, N, E, S))
 
     variableFunciones = StringVar(aplicacion.miframe, value="Función")
-    Funciones_lista = ["RAD","DEG","..."]
-    Funciones = OptionMenu(aplicacion.miframe, variableFunciones, *Funciones_lista, command=Funcionescal)
+    Funciones = OptionMenu(aplicacion.miframe, variableFunciones, *["RAD","DEG","..."], command=Funcionescal)
     Funciones.config(background='black', foreground='white',font='arial 12',  relief="flat")
     Funciones.grid(column=1, row=3, sticky=(W, N, E, S))
 
@@ -452,9 +526,9 @@ def Cientifica():
     boton_XelevadoY.grid(column=0, row=7, sticky=(W, N, E, S))
     boton_10elevadoX = ttk.Button(aplicacion.miframe, text="10^x", style='BotonesNum.TButton', command= lambda: _10elevadoX())
     boton_10elevadoX.grid(column=0, row=8, sticky=(W, N, E, S))
-    boton_log = ttk.Button(aplicacion.miframe, text="log", style='BotonesNum.TButton',)
+    boton_log = ttk.Button(aplicacion.miframe, text="log", style='BotonesNum.TButton',command=lambda: logaritmo())
     boton_log.grid(column=0, row=9, sticky=(W, N, E, S))
-    boton_ln= ttk.Button(aplicacion.miframe, text="ln", style='BotonesNum.TButton',)
+    boton_ln= ttk.Button(aplicacion.miframe, text="ln", style='BotonesNum.TButton',command=lambda: logaritmo_natural())
     boton_ln.grid(column=0, row=10, sticky=(W, N, E, S))
 
     boton_PI = ttk.Button(aplicacion.miframe, text="π", style='BotonesNum.TButton',command=lambda: numeroPulsado('3.1415926535897932384626433832795'))
@@ -464,18 +538,19 @@ def Cientifica():
     boton_divididoX = ttk.Button(aplicacion.miframe, text="1/X", style='BotonesNum.TButton', command=lambda: DivididoX())
     boton_divididoX.grid(column=1, row=5, sticky=(W, N, E, S))
 
-    boton_abrirP = ttk.Button(aplicacion.miframe, text="(", style='BotonesNum.TButton',)
+    boton_abrirP = ttk.Button(aplicacion.miframe, text="(", style='BotonesNum.TButton',command=lambda: Aparentesis())
     boton_abrirP.grid(column=1, row=6, sticky=(W, N, E, S))
-    boton_cerrarP = ttk.Button(aplicacion.miframe, text=")", style='BotonesNum.TButton',)
+    boton_cerrarP = ttk.Button(aplicacion.miframe, text=")", style='BotonesNum.TButton',command=lambda: Cparentesis())
     boton_cerrarP.grid(column=2, row=6, sticky=(W, N, E, S))
-    boton_factorial = ttk.Button(aplicacion.miframe, text="N!", style='BotonesNum.TButton',)
+    boton_factorial = ttk.Button(aplicacion.miframe, text="N!", style='BotonesNum.TButton',command=lambda: factorial())
     boton_factorial.grid(column=3, row=6, sticky=(W, N, E, S))
     boton_Vabsoluto = ttk.Button(aplicacion.miframe, text="|X|", style='BotonesNum.TButton',command=lambda: ValorAbsoluto())
     boton_Vabsoluto.grid(column=2, row=5, sticky=(W, N, E, S))
-    boton_exp = ttk.Button(aplicacion.miframe, text="exp", style='BotonesNum.TButton',)
+    boton_exp = ttk.Button(aplicacion.miframe, text="exp", style='BotonesNum.TButton',command=lambda: exponencial())
     boton_exp.grid(column=3, row=5, sticky=(W, N, E, S))
-    boton_mod = ttk.Button(aplicacion.miframe, text="mod", style='BotonesNum.TButton',)
+    boton_mod = ttk.Button(aplicacion.miframe, text="%", style='BotonesNum.TButton', command=lambda: Porcentaje())
     boton_mod.grid(column=4, row=5, sticky=(W, N, E, S))
+
 
     for child in aplicacion.miframe.winfo_children():
         child.grid_configure(ipady=6, padx=1, pady=1)
